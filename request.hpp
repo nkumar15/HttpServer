@@ -24,6 +24,9 @@ class Request :: public Common::Uncopyable {
     void SetHost(const std::string host);
     std::string GetHost();
 
+    void SetPort(unsigned int port); 
+    unsigned int GetPort();
+
     Headers GetHeader();
     void SetHeader(const std::string key, const std::string value);
     void GetHeader(const std::string key);

@@ -13,7 +13,7 @@ struct Uri :: public Common::Uncopyable {
     std::string GetQueryString(std::string key);
   
     std::string m_path;
-    QueryStrings m_query_strings;
+    QueryString m_query_strings;
 };
 }; // Http
 
