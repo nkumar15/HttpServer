@@ -1,8 +1,10 @@
+#ifndef HTTP_HEADERS_HPP
+#define HTTP_HEADERS_HPP
 
-namespace Http {
 
-typedef unordered_multimap<std::string, std::string> HeadersMap;
-
+namespace http {
+namespace server {
+	
 class Headers : Common::Uncopyable {
 
   public:
@@ -17,3 +19,8 @@ class Headers : Common::Uncopyable {
   private:
     HeadersMap m_headers;
 };
+
+} // namespace server
+} // namespace http
+
+#endif

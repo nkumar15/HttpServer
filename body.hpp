@@ -1,9 +1,16 @@
+#ifndef HTTP_BODY_HPP
+#define HTTP_BODY_HPP
 
-namespace Http {
-
+namespace http {
+namespace server {
+	
 struct Body : Common::Uncopyable {
   
   std::string m_body;
 
 };
-}; // Http
+
+} // namespace server
+} // namespace http
+
+#endif

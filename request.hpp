@@ -1,12 +1,17 @@
+#ifndef HTTP_REQUEST_HPP
+#define HTTP_REQUEST_HPP
 
 #include<iostream>
+#include "uri.hpp"
+#include "headers.hpp"
+#include "body.hpp"
 
-namespace Http {
+namespace http {
+namespace server {
 
 class Request :: public Common::Uncopyable {
 
   public:
-
     Request();
 
     std::string GetMethod();
@@ -41,7 +46,9 @@ class Request :: public Common::Uncopyable {
     std::string m_version;
     Headers     m_headers;
     Body        m_body;
-
 };
-}; // Http
 
+} // namespace server
+} // namespace http
+
+#endif

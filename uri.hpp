@@ -1,6 +1,10 @@
+#ifndef HTTP_URI_HPP
+#define HTTP_URI_HPP
 
+#include <unordered_map>
 
-namespace Http {
+namespace http {
+namespace server {
 
 typedef unordered_map<std::string, std::string> QueryString;
 
@@ -17,6 +21,9 @@ struct Uri :: public Common::Uncopyable {
     std::string m_path;
     QueryString m_query_strings;
 };
-}; // Http
+} // namespace server
+} // namespace http
+
+#endif
 
 
