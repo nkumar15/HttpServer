@@ -1,5 +1,7 @@
 
 
+namespace http {
+namespace server {
 
 enum class Methods {
   GET,
@@ -10,3 +12,8 @@ enum class Methods {
   HEAD,
   TRACE
 };
+
+} // namespace server
+} // namespace http
+
+#endif

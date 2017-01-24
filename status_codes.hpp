@@ -1,4 +1,7 @@
 
+namespace http {
+namespace server {
+	
 enum class StatusCodes  {
 
   /* Information 1xx */
@@ -52,3 +55,8 @@ enum class StatusCodes  {
   GATEWAY_TIMEOUT                 = 504,
   HTTP_VERSION_NOT_SUPPORTED      = 505
 };
+
+} // namespace server
+} // namespace http
+
+#endif

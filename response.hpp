@@ -1,6 +1,15 @@
 
-namespace Http {
+#ifndef HTTP_RESPONSE_HPP
+#define HTTP_RESPONSE_HPP
 
+#include<iostream>
+#include "uri.hpp"
+#include "headers.hpp"
+#include "body.hpp"
+
+namespace http {
+namespace server {
+	
 class Response : public Common:Uncopyable {
 
   public:
@@ -31,5 +40,8 @@ class Response : public Common:Uncopyable {
     Headers     m_headers;
     Body        m_body;
 };
-}; // Http
 
+} // namespace server
+} // namespace http
+
+#endif
