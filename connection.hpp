@@ -1,10 +1,22 @@
+//
+// connection.hpp
+// ~~~~~~~~~~~~~~
+//
+// Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+//
+// Distributed under the Boost Software License, Version 1.0. (See accompanying
+// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+
 #ifndef HTTP_CONNECTION_HPP
 #define HTTP_CONNECTION_HPP
 
-#include <array>
-#include <memory>
 #include <boost/asio.hpp>
-#include "response.hpp"
+#include <boost/array.hpp>
+#include <boost/noncopyable.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/enable_shared_from_this.hpp>
+#include "reply.hpp"
 #include "request.hpp"
 #include "request_handler.hpp"
 #include "request_parser.hpp"
@@ -12,34 +24,60 @@
 namespace http {
 namespace server {
 
-class Connection : Common::Uncopyable {
+class connection_manager;
 
-  public:
-    explicit Connection(boost::asio::ip::tcp::socket socket,
-        ConnectionManager& connection_mgr, request_handler& handler);
+/// Represents a single connection from a client.
+class connection
+  : public boost::enable_shared_from_this<connection>,
+    private boost::noncopyable
+{
+public:
+  /// Construct a connection with the given io_service.
+  explicit connection(boost::asio::io_service& io_service,
+      connection_manager& manager, request_handler& handler);
 
-    void start();
+  /// Get the socket associated with the connection.
+  boost::asio::ip::tcp::socket& socket();
 
-    void stop();
-  
-  private:
-    void do_read();
-	void do_write();
-	
-	boost::asio::ip::tcp::socket m_socket;
-	ConnectionManager&           m_connection_mgr;
-	request_handler&             m_request_handler;
-	std::array<char,8192>        m_buffer;
-	request                      m_request;
-	request_parser               m_request_parser;
-	response                     m_response;
+  /// Start the first asynchronous operation for the connection.
+  void start();
+
+  /// Stop all asynchronous operations associated with the connection.
+  void stop();
+
+private:
+  /// Handle completion of a read operation.
+  void handle_read(const boost::system::error_code& e,
+      std::size_t bytes_transferred);
+
+  /// Handle completion of a write operation.
+  void handle_write(const boost::system::error_code& e);
+
+  /// Socket for the connection.
+  boost::asio::ip::tcp::socket socket_;
+
+  /// The manager for this connection.
+  connection_manager& connection_manager_;
+
+  /// The handler used to process the incoming request.
+  request_handler& request_handler_;
+
+  /// Buffer for incoming data.
+  boost::array<char, 8192> buffer_;
+
+  /// The incoming request.
+  request request_;
+
+  /// The parser for the incoming request.
+  request_parser request_parser_;
+
+  /// The reply to be sent back to the client.
+  reply reply_;
 };
 
-typedef std::shared_ptr<Connection> ConnectionPointer;
+typedef boost::shared_ptr<connection> connection_ptr;
 
-}  // namespace server
+} // namespace server
 } // namespace http
 
-#endif
-
-
+#endif // HTTP_CONNECTION_HPP
