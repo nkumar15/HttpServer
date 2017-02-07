@@ -1,5 +1,5 @@
 //
-// request_handler.cpp
+// RequestHandler.cpp
 // ~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
@@ -14,7 +14,7 @@
 #include <string>
 #include <boost/lexical_cast.hpp>
 #include "mime_types.hpp"
-#include "reply.hpp"
+#include "response.hpp"
 #include "request.hpp"
 #include "iostream"
 #include <boost/log/trivial.hpp>
@@ -22,19 +22,19 @@
 namespace http {
 namespace server {
 
-request_handler::request_handler(const std::string& doc_root)
-  : doc_root_(doc_root)
+RequestHandler::RequestHandler()
+  : doc_root_(".")
 {
 }
 
-void request_handler::handle_request(const request& req, reply& rep)
+void RequestHandler::HandleRequest(const Request& req, Response& resp)
 {
   // Decode url to path.
   std::string request_path;
-  if (!url_decode(req.uri, request_path))
+  if (!UrlDecode(req.uri, request_path))
   {
     BOOST_LOG_TRIVIAL(info) << "No request path found";
-    rep = reply::stock_reply(reply::bad_request);
+    resp = Response::StockResponse(Response::Status::Bad_Request);
     return;
   }
 
@@ -43,7 +43,7 @@ void request_handler::handle_request(const request& req, reply& rep)
   if (request_path.empty() || request_path[0] != '/'
       || request_path.find("..") != std::string::npos)
   {
-    rep = reply::stock_reply(reply::bad_request);
+    resp = Response::StockResponse(Response::Status::Bad_Request);
     return;
   }
 
@@ -69,23 +69,23 @@ void request_handler::handle_request(const request& req, reply& rep)
   std::ifstream is(full_path.c_str(), std::ios::in | std::ios::binary);
   if (!is)
   {
-    rep = reply::stock_reply(reply::not_found);
+    resp = Response::StockResponse(Response::Status::Not_Found);
     return;
   }
 
-  // Fill out the reply to be sent to the client.
-  rep.status = reply::ok;
+  // Fill out the Response to be sent to the client.
+  resp.status = Response::Status::OK;
   char buf[512];
   while (is.read(buf, sizeof(buf)).gcount() > 0)
-    rep.content.append(buf, is.gcount());
-  rep.headers.resize(2);
-  rep.headers[0].name = "Content-Length";
-  rep.headers[0].value = boost::lexical_cast<std::string>(rep.content.size());
-  rep.headers[1].name = "Content-Type";
-  rep.headers[1].value = mime_types::extension_to_type(extension);
+    resp.content.append(buf, is.gcount());
+  resp.headers.resize(2);
+  resp.headers[0].name = "Content-Length";
+  resp.headers[0].value = boost::lexical_cast<std::string>(resp.content.size());
+  resp.headers[1].name = "Content-Type";
+  resp.headers[1].value = mime_types::extension_to_type(extension);
 }
 
-bool request_handler::url_decode(const std::string& in, std::string& out)
+bool RequestHandler::UrlDecode(const std::string& in, std::string& out)
 {
   out.clear();
   out.reserve(in.size());

@@ -1,5 +1,5 @@
 //
-// connection.hpp
+// Connection.hpp
 // ~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
@@ -16,7 +16,7 @@
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
-#include "reply.hpp"
+#include "response.hpp"
 #include "request.hpp"
 #include "request_handler.hpp"
 #include "request_parser.hpp"
@@ -24,58 +24,58 @@
 namespace http {
 namespace server {
 
-class connection_manager;
+class ConnectionManager;
 
-/// Represents a single connection from a client.
-class connection
-  : public boost::enable_shared_from_this<connection>,
+/// Represents a single Connection from a client.
+class Connection
+  : public boost::enable_shared_from_this<Connection>,
     private boost::noncopyable
 {
 public:
-  /// Construct a connection with the given io_service.
-  explicit connection(boost::asio::io_service& io_service,
-      connection_manager& manager, request_handler& handler);
+  /// Construct a Connection with the given io_service.
+  explicit Connection(boost::asio::io_service& io_service,
+      ConnectionManager& manager, RequestHandler& handler);
 
-  /// Get the socket associated with the connection.
-  boost::asio::ip::tcp::socket& socket();
+  /// Get the socket associated with the Connection.
+  boost::asio::ip::tcp::socket& Socket();
 
-  /// Start the first asynchronous operation for the connection.
-  void start();
+  /// Start the first asynchronous operation for the Connection.
+  void Start();
 
-  /// Stop all asynchronous operations associated with the connection.
-  void stop();
+  /// Stop all asynchronous operations associated with the Connection.
+  void Stop();
 
 private:
   /// Handle completion of a read operation.
-  void handle_read(const boost::system::error_code& e,
+  void HandleRead(const boost::system::error_code& e,
       std::size_t bytes_transferred);
 
   /// Handle completion of a write operation.
-  void handle_write(const boost::system::error_code& e);
+  void HandleWrite(const boost::system::error_code& e);
 
-  /// Socket for the connection.
+  /// Socket for the Connection.
   boost::asio::ip::tcp::socket socket_;
 
-  /// The manager for this connection.
-  connection_manager& connection_manager_;
+  /// The manager for this Connection.
+  ConnectionManager& connection_manager_;
 
   /// The handler used to process the incoming request.
-  request_handler& request_handler_;
+  RequestHandler& request_handler_;
 
   /// Buffer for incoming data.
   boost::array<char, 8192> buffer_;
 
   /// The incoming request.
-  request request_;
+  Request request_;
 
   /// The parser for the incoming request.
-  request_parser request_parser_;
+  RequestParser request_parser_;
 
   /// The reply to be sent back to the client.
-  reply reply_;
+  Response response_;
 };
 
-typedef boost::shared_ptr<connection> connection_ptr;
+typedef boost::shared_ptr<Connection> ConnectionPtr;
 
 } // namespace server
 } // namespace http

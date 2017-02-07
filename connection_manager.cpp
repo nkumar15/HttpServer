@@ -1,5 +1,5 @@
 //
-// connection_manager.cpp
+// ConnectionManager.cpp
 // ~~~~~~~~~~~~~~~~~~~~~~
 //
 // Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
@@ -15,22 +15,22 @@
 namespace http {
 namespace server {
 
-void connection_manager::start(connection_ptr c)
+void ConnectionManager::Start(ConnectionPtr c)
 {
   connections_.insert(c);
-  c->start();
+  c->Start();
 }
 
-void connection_manager::stop(connection_ptr c)
+void ConnectionManager::Stop(ConnectionPtr c)
 {
   connections_.erase(c);
-  c->stop();
+  c->Stop();
 }
 
-void connection_manager::stop_all()
+void ConnectionManager::StopAll()
 {
   std::for_each(connections_.begin(), connections_.end(),
-      boost::bind(&connection::stop, _1));
+      boost::bind(&Connection::Stop, _1));
   connections_.clear();
 }
 

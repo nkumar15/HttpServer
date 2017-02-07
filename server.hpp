@@ -11,28 +11,27 @@
 namespace http {
 namespace server {
 
-/// The top-level class of the HTTP server.
-class server
+/// The top-level class of the HTTP Server.
+class Server
   : private boost::noncopyable
 {
 public:
-  /// Construct the server to listen on the specified TCP address and port, and
+  /// Construct the Server to listen on the specified TCP address and port, and
   /// serve up files from the given directory.
-  explicit server(const std::string& address, const std::string& port,
-      const std::string& doc_root);
+  explicit Server(const std::string& address, const std::string& port);
 
-  /// Run the server's io_service loop.
-  void run();
+  /// Run the Server's io_service loop.
+  void Run();
 
 private:
   /// Initiate an asynchronous accept operation.
-  void start_accept();
+  void StartAccept();
 
   /// Handle completion of an asynchronous accept operation.
-  void handle_accept(const boost::system::error_code& e);
+  void HandleAccept(const boost::system::error_code& e);
 
-  /// Handle a request to stop the server.
-  void handle_stop();
+  /// Handle a request to stop the Server.
+  void HandleStop();
 
   /// The io_service used to perform asynchronous operations.
   boost::asio::io_service io_service_;
@@ -44,16 +43,16 @@ private:
   boost::asio::ip::tcp::acceptor acceptor_;
 
   /// The connection manager which owns all live connections.
-  connection_manager connection_manager_;
+  ConnectionManager connection_manager_;
 
   /// The next connection to be accepted.
-  connection_ptr new_connection_;
+  ConnectionPtr new_connection_;
 
   /// The handler for all incoming requests.
-  request_handler request_handler_;
+  RequestHandler request_handler_;
 };
 
-} // namespace server
+} // namespace Server
 } // namespace http
 
 #endif // HTTP_SERVER_HPP

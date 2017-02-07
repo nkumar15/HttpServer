@@ -1,5 +1,5 @@
 //
-// server.cpp
+// Server.cpp
 // ~~~~~~~~~~
 //
 // Copyright (c) 2003-2012 Christopher M. Kohlhoff (chris at kohlhoff dot com)
@@ -15,16 +15,15 @@
 namespace http {
 namespace server {
 
-server::server(const std::string& address, const std::string& port,
-    const std::string& doc_root)
+Server::Server(const std::string& address, const std::string& port)
   : io_service_(),
     signals_(io_service_),
     acceptor_(io_service_),
     connection_manager_(),
     new_connection_(),
-    request_handler_(doc_root)
+    request_handler_()
 {
-  // Register to handle the signals that indicate when the server should exit.
+  // Register to handle the signals that indicate when the Server should exit.
   // It is safe to register for the same signal multiple times in a program,
   // provided all registration for the specified signal is made through Asio.
   signals_.add(SIGINT);
@@ -32,7 +31,7 @@ server::server(const std::string& address, const std::string& port,
 #if defined(SIGQUIT)
   signals_.add(SIGQUIT);
 #endif // defined(SIGQUIT)
-  signals_.async_wait(boost::bind(&server::handle_stop, this));
+  signals_.async_wait(boost::bind(&Server::HandleStop, this));
 
   // Open the acceptor with the option to reuse the address (i.e. SO_REUSEADDR).
   boost::asio::ip::tcp::resolver resolver(io_service_);
@@ -43,30 +42,30 @@ server::server(const std::string& address, const std::string& port,
   acceptor_.bind(endpoint);
   acceptor_.listen();
 
-  start_accept();
+  StartAccept();
 }
 
-void server::run()
+void Server::Run()
 {
   // The io_service::run() call will block until all asynchronous operations
-  // have finished. While the server is running, there is always at least one
+  // have finished. While the Server is running, there is always at least one
   // asynchronous operation outstanding: the asynchronous accept call waiting
   // for new incoming connections.
   io_service_.run();
 }
 
-void server::start_accept()
+void Server::StartAccept()
 {
-  new_connection_.reset(new connection(io_service_,
+  new_connection_.reset(new Connection(io_service_,
         connection_manager_, request_handler_));
-  acceptor_.async_accept(new_connection_->socket(),
-      boost::bind(&server::handle_accept, this,
+  acceptor_.async_accept(new_connection_->Socket(),
+      boost::bind(&Server::HandleAccept, this,
         boost::asio::placeholders::error));
 }
 
-void server::handle_accept(const boost::system::error_code& e)
+void Server::HandleAccept(const boost::system::error_code& e)
 {
-  // Check whether the server was stopped by a signal before this completion
+  // Check whether the Server was stopped by a signal before this completion
   // handler had a chance to run.
   if (!acceptor_.is_open())
   {
@@ -75,20 +74,20 @@ void server::handle_accept(const boost::system::error_code& e)
 
   if (!e)
   {
-    connection_manager_.start(new_connection_);
+    connection_manager_.Start(new_connection_);
   }
 
-  start_accept();
+  StartAccept();
 }
 
-void server::handle_stop()
+void Server::HandleStop()
 {
-  // The server is stopped by cancelling all outstanding asynchronous
+  // The Server is stopped by cancelling all outstanding asynchronous
   // operations. Once all operations have finished the io_service::run() call
   // will exit.
   acceptor_.close();
-  connection_manager_.stop_all();
+  connection_manager_.StopAll();
 }
 
-} // namespace server
+} // namespace Server
 } // namespace http

@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
     // Check command line arguments.
     if (argc != 4)
     {
-      std::cerr << "Usage: http_server <address> <port> <doc_root>\n";
+      std::cerr << "Usage: http_server <address> <port>\n";
       std::cerr << "  For IPv4, try:\n";
       std::cerr << "    receiver 0.0.0.0 80 .\n";
       std::cerr << "  For IPv6, try:\n";
@@ -30,10 +30,10 @@ int main(int argc, char* argv[])
     }
 
     // Initialise the server.
-    http::server::server s(argv[1], argv[2], argv[3]);
+    http::server::Server s(argv[1], argv[2]);
 
     // Run the server until stopped.
-    s.run();
+    s.Run();
   }
   catch (std::exception& e)
   {
