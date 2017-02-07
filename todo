@@ -1,4 +1,4 @@
 1. single thread http server           : ready
-3. write your own request class logic  : to do
-4. write your own response class logic : to do
-5. design 
+2. design a rest resource class        : to do
+3. design session mechanism            : to do
+3. design ssl mechanism                : to do
