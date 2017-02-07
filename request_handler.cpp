@@ -16,6 +16,8 @@
 #include "mime_types.hpp"
 #include "reply.hpp"
 #include "request.hpp"
+#include "iostream"
+#include <boost/log/trivial.hpp>
 
 namespace http {
 namespace server {
@@ -31,10 +33,12 @@ void request_handler::handle_request(const request& req, reply& rep)
   std::string request_path;
   if (!url_decode(req.uri, request_path))
   {
+    BOOST_LOG_TRIVIAL(info) << "No request path found";
     rep = reply::stock_reply(reply::bad_request);
     return;
   }
 
+  BOOST_LOG_TRIVIAL(info) << "Request path found " << request_path;
   // Request path must be absolute and not contain "..".
   if (request_path.empty() || request_path[0] != '/'
       || request_path.find("..") != std::string::npos)
@@ -49,6 +53,7 @@ void request_handler::handle_request(const request& req, reply& rep)
     request_path += "index.html";
   }
 
+  BOOST_LOG_TRIVIAL(info) << "Resource for request path " << request_path;
   // Determine the file extension.
   std::size_t last_slash_pos = request_path.find_last_of("/");
   std::size_t last_dot_pos = request_path.find_last_of(".");
@@ -60,6 +65,7 @@ void request_handler::handle_request(const request& req, reply& rep)
 
   // Open the file to send back.
   std::string full_path = doc_root_ + request_path;
+  BOOST_LOG_TRIVIAL(info) << "Full path of resource to read " << full_path;
   std::ifstream is(full_path.c_str(), std::ios::in | std::ios::binary);
   if (!is)
   {

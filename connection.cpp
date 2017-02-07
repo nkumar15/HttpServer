@@ -13,6 +13,7 @@
 #include <boost/bind.hpp>
 #include "connection_manager.hpp"
 #include "request_handler.hpp"
+#include <boost/log/trivial.hpp>
 
 namespace http {
 namespace server {
@@ -46,6 +47,7 @@ void connection::stop()
 void connection::handle_read(const boost::system::error_code& e,
     std::size_t bytes_transferred)
 {
+
   if (!e)
   {
     boost::tribool result;
@@ -54,6 +56,7 @@ void connection::handle_read(const boost::system::error_code& e,
 
     if (result)
     {
+      BOOST_LOG_TRIVIAL(info) << "Ready for response";
       request_handler_.handle_request(request_, reply_);
       boost::asio::async_write(socket_, reply_.to_buffers(),
           boost::bind(&connection::handle_write, shared_from_this(),
@@ -61,6 +64,7 @@ void connection::handle_read(const boost::system::error_code& e,
     }
     else if (!result)
     {
+      BOOST_LOG_TRIVIAL(info) << "Responding to bad request";
       reply_ = reply::stock_reply(reply::bad_request);
       boost::asio::async_write(socket_, reply_.to_buffers(),
           boost::bind(&connection::handle_write, shared_from_this(),
@@ -68,6 +72,7 @@ void connection::handle_read(const boost::system::error_code& e,
     }
     else
     {
+      BOOST_LOG_TRIVIAL(info) << "Reading request....";
       socket_.async_read_some(boost::asio::buffer(buffer_),
           boost::bind(&connection::handle_read, shared_from_this(),
             boost::asio::placeholders::error,

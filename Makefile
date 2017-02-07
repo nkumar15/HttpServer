@@ -1,6 +1,6 @@
 CXX=g++
-CXXFLAGS=-std=c++11 -I. -I/usr/local/boost_1_42_0
-LDFLAGS=-lboost_system -lboost_thread -lpthread
+CXXFLAGS=-std=c++11 -I. -I/usr/local/boost_1_42_0 -DBOOST_LOG_DYN_LINK
+LDFLAGS=-lboost_system -lboost_thread -lpthread -lboost_log
 
 EXEC=http_server
 SOURCES=$(wildcard *.cpp) 
