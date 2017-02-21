@@ -24,6 +24,8 @@ Connection::Connection(boost::asio::io_service& io_service,
     connection_manager_(manager),
     request_handler_(handler)
 {
+
+
 }
 
 boost::asio::ip::tcp::socket& Connection::Socket()

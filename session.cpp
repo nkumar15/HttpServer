@@ -3,7 +3,7 @@
 namespace http {
 namespace server {
 
-void Session :: SetRequestId(std::string &id) {
+void Session :: SetSessionId(const std::string &id) {
   session_id = id;
 }
 
@@ -12,12 +12,12 @@ std::string Session :: GetSessionId() {
 }
 
 
-void Session :: SetRequest(std::shared_ptr<Request>& req) {
-  request = req;
+void Session :: SetRequest(const RequestPtr& req) {
+  request_ptr = req;
 }
 
 RequestPtr& Session::GetRequest() {
-  return request;
+  return request_ptr;
 }
 
 

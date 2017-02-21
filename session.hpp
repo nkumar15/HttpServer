@@ -1,7 +1,10 @@
 #include <memory>
+#include "request.hpp"
 
 namespace http {
 namespace server {
+
+using RequestPtr = std::shared_ptr<Request>;
 
 class Session { 
 
@@ -12,11 +15,10 @@ class Session {
     RequestPtr& GetRequest();
     void SetRequest(const RequestPtr& request);
 
-  private:
+    Session(const Session& other) = delete;
+    Session& operator=(const Session& rhs) = delete;
 
-   Session(const Session& other) = delete;
-   Session& operator=(Session& rhs) = delete;
-   
+  private:
    std::string session_id;
    RequestPtr request_ptr;
 };
