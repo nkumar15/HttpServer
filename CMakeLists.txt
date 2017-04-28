@@ -1,3 +1,7 @@
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required (VERSION 2.8)
 project (httpserver)
-add_executable(httpserver *.cxx)
+find_package(Boost 1.63.0)
+
+file(GLOB SOURCES "src/*.cpp")
+
+add_executable(httpserver ${SOURCES})
